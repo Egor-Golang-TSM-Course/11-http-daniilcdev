@@ -13,9 +13,7 @@ import (
 func callServer() {
 	segments := []string{"/", "/time", "/random"}
 	for _, path := range segments {
-		body := get(path)
-
-		fmt.Println("client: response", string(body))
+		_ = get(path)
 	}
 
 	users := []customTypes.User{
@@ -28,7 +26,6 @@ func callServer() {
 
 	for i, user := range users {
 		fmt.Println("User: #", i+1, user)
-
 		fmt.Println("client: adding new user", user)
 		data, err := json.Marshal(user)
 		if err != nil {
@@ -56,12 +53,15 @@ func get(endpoint string) []byte {
 		log.Fatal(err)
 	}
 
+	fmt.Println("client: [GET] raw response", string(body))
+
 	return body
 }
 
 func post(endpoint string, data []byte) []byte {
 	const serverAddr = "http://127.0.0.1:8080"
 	fmt.Println("client: [POST] calling endpoint", endpoint)
+
 	r, err := http.Post(serverAddr+endpoint, "application/json", bytes.NewBuffer(data))
 	if err != nil {
 		log.Fatal(err)
@@ -74,6 +74,8 @@ func post(endpoint string, data []byte) []byte {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Println("client: [POST] raw response", string(body))
 
 	return body
 }
